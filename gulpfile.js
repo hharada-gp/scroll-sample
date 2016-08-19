@@ -14,9 +14,13 @@ gulp.task('default', function() {
     notify: false,
     port: 3000,
     files: ["./public/**/*"],
+    server: {
+      baseDir: ['./public/']
+    }
   });
   gulp.watch(['./src/scss/*.scss', './src/scss/**/_*.scss'], ['sass']);
   gulp.watch(['./src/coffee/*.coffee', './src/coffee/**/_*.coffee'], ['coffee']);
+  gulp.watch(['./src/jade/*.jade', './src/jade/**/_*.jade'], ['jade']);
 });
 
 

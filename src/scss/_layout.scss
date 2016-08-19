@@ -1,0 +1,25 @@
+.l-{
+  &block{
+    box-sizing: border-box;
+    height: 100%;
+    left: 0;
+    opacity: 1;
+    padding: 40px;
+    position: absolute;
+    transition: all .5s ease-in-out;
+    top: 50%;
+    width: 100%;
+    &:nth-child(4n+1){
+      background-color: #c9d5e4;
+    }
+    &:nth-child(4n+2){
+      background-color: #d3c5da;
+    }
+    &:nth-child(4n+3){
+      background-color: #d8e6dc;
+    }
+    &:nth-child(4n){
+      background-color: #e4cac9;
+    }
+  }
+}
