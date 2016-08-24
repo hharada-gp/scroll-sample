@@ -1,30 +1,30 @@
-var scrollBlocks;
-
-scrollBlocks = document.getElementsByClassName('js-scrollBlock');
-
 (function() {
-  var current;
-  current = 0;
+  var $scrollBlocks, flag, scroll, wheelTimer;
+  flag = 0;
+  scroll = void 0;
+  wheelTimer = void 0;
+  $scrollBlocks = $('.js-scrollBlock');
   return window.addEventListener('wheel', function(e) {
-    if ((e.deltaY > 2) && (current < 2000)) {
-      current = current + e.deltaY;
-      console.log(current);
-    } else if ((e.deltaY < -2) && (current >= 0)) {
-      current = current + e.deltaY;
-      console.log(current);
+    if (e.deltaY > 1) {
+      scroll = 'down';
+    } else if (e.deltaY < -1) {
+      scroll = 'up';
     }
-    if (current < 500) {
-      $('.js-scrollBlock').removeClass('is-visible');
-      $('#0').addClass('is-visible');
-    } else if (current >= 500 && current < 1000) {
-      $('.js-scrollBlock').removeClass('is-visible');
-      $('#1').addClass('is-visible');
-    } else if (current >= 1000 && current < 1500) {
-      $('.js-scrollBlock').removeClass('is-visible');
-      $('#2').addClass('is-visible');
-    } else if (current >= 1500) {
-      $('.js-scrollBlock').removeClass('is-visible');
-      $('#3').addClass('is-visible');
+    if (wheelTimer) {
+      clearTimeout(wheelTimer);
     }
+    wheelTimer = setTimeout(function() {
+      if (scroll === 'down' && flag < ($scrollBlocks.length - 1)) {
+        flag++;
+        $scrollBlocks.removeClass('is-visible');
+        $scrollBlocks.eq(flag).addClass('is-visible');
+      } else if (scroll === 'up' && flag > 0) {
+        flag--;
+        $scrollBlocks.removeClass('is-visible');
+        $scrollBlocks.eq(flag).addClass('is-visible');
+      }
+    }, 100);
+  }, {
+    passive: true
   });
 })();
