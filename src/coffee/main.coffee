@@ -2,26 +2,36 @@ do ->
   flag = 0
   scroll = undefined
   wheelTimer = undefined
+  animationInProgress = false
   $scrollBlocks = $('.js-scrollBlock')
 
   window.addEventListener 'wheel', (e)->
-    if e.deltaY > 1
-      scroll = 'down'
-    else if e.deltaY < -1
-      scroll = 'up'
+    if animationInProgress
+      scroll = undefined
+    else
+      if e.deltaY > 1
+        scroll = 'down'
+      else if e.deltaY < -1
+        scroll = 'up'
 
-    if wheelTimer
-      clearTimeout wheelTimer
+      if wheelTimer
+        clearTimeout wheelTimer
 
     wheelTimer = setTimeout ->
       if scroll == 'down' && flag < ($scrollBlocks.length - 1)
         flag++
-        $scrollBlocks.removeClass 'is-visible'
-        $scrollBlocks.eq(flag).addClass 'is-visible'
+        $scrollBlocks.removeClass('is-visible')
+        animationInProgress = true
+        $scrollBlocks.eq(flag).addClass('is-visible').on('transitionend', ->
+            animationInProgress = false
+          )
       else if scroll == 'up' && flag > 0
         flag--
-        $scrollBlocks.removeClass 'is-visible'
-        $scrollBlocks.eq(flag).addClass 'is-visible'
+        $scrollBlocks.removeClass('is-visible')
+        animationInProgress = true
+        $scrollBlocks.eq(flag).addClass('is-visible').on('transitionend', ->
+            animationInProgress = false
+          )
       return
     , 100
 
