@@ -20,7 +20,15 @@
       }
     });
   };
+  window.addEventListener('touchmove', function(e) {
+    var event;
+    e.preventDefault();
+    event = document.createEvent('HTMLEvents');
+    event.initEvent('wheel', true, false);
+    return window.dispatchEvent(event);
+  });
   return window.addEventListener('wheel', function(e) {
+    console.log(e);
     if (animationInProgress) {
       scroll = void 0;
     } else {

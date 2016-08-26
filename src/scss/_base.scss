@@ -20,12 +20,11 @@ time, mark, audio, video{
   vertical-align: bottom;
 }
 html, body{
+  overflow: hidden;
   height: 100%;
 }
 body{
   font-family: 'Lato', 'Hiragino Kaku Gothic Pro', sans-serif;
-  overflow: hidden;
-  transition: all .5s ease-in-out;
 }
 img{
   max-width: 100%;

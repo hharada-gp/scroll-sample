@@ -13,9 +13,9 @@ gulp.task('default', function() {
   browserSync({
     notify: false,
     port: 3000,
-    files: ["./public/**/*"],
+    files: ["./docs/**/*"],
     server: {
-      baseDir: ['./public/']
+      baseDir: ['./docs/']
     }
   });
   gulp.watch(['./src/scss/*.scss', './src/scss/**/_*.scss'], ['sass']);
@@ -30,7 +30,7 @@ gulp.task('sass', function() {
     .pipe($.sass())
     .pipe($.autoprefixer())
     .pipe($.cssmin())
-    .pipe(gulp.dest('./public/css/'))
+    .pipe(gulp.dest('./docs/css/'))
     .on('end', reload);
 });
 
@@ -41,12 +41,12 @@ gulp.task('coffee', function() {
       bare: true
     }))
     .on('error', console.error.bind(console))
-    .pipe(gulp.dest('./public/js/'));
+    .pipe(gulp.dest('./docs/js/'));
 });
 
 gulp.task('jade', function(){
   gulp.src(['./src/jade/*.jade', './src/coffee/**/_*.jade'])
   .pipe($.plumber())
   .pipe($.jade())
-  .pipe(gulp.dest('./public/'));
+  .pipe(gulp.dest('./docs/'));
 });

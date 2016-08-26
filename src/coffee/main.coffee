@@ -18,7 +18,14 @@ do ->
       else if i == (flag+1)
         $(this).addClass('is-next')
 
+  window.addEventListener 'touchmove', (e)->
+    e.preventDefault()
+    event = document.createEvent 'HTMLEvents'
+    event.initEvent 'wheel', true, false
+    return window.dispatchEvent(event)
+
   window.addEventListener 'wheel', (e)->
+    console.log e
     if animationInProgress
       scroll = undefined
     else
