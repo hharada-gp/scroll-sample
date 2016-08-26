@@ -1,31 +1,38 @@
 do ->
-  flag = 0
+  slide = 0
   scroll = undefined
   wheelTimer = undefined
   animationInProgress = false
+  setTimeLimit = false
   $scrollBlocks = $('.js-scrollBlock')
 
-  toggleFlags = ->
+  toggleSlides = ->
     animationInProgress = true
     $scrollBlocks.each (i)->
       $(this).removeClass('is-current is-prev is-next')
-      if i == flag
+      if i == slide
         $(this).addClass('is-current').on('transitionend', ->
           animationInProgress = false
         )
-      else if i == (flag-1)
+      else if i == (slide-1)
         $(this).addClass('is-prev')
-      else if i == (flag+1)
+      else if i == (slide+1)
         $(this).addClass('is-next')
+    return
 
-  window.addEventListener 'touchmove', (e)->
-    e.preventDefault()
-    event = document.createEvent 'HTMLEvents'
-    event.initEvent 'wheel', true, false
-    return window.dispatchEvent(event)
+  wheelAction = ->
+    console.log 'wheeled'
+    if scroll == 'down' && slide < ($scrollBlocks.length - 1)
+      slide++
+      toggleSlides()
+    else if scroll == 'up' && slide > 0
+      slide--
+      toggleSlides()
+    return
 
   window.addEventListener 'wheel', (e)->
     console.log e
+    e.preventDefault()
     if animationInProgress
       scroll = undefined
     else
@@ -37,15 +44,24 @@ do ->
     if wheelTimer
       clearTimeout wheelTimer
 
-    wheelTimer = setTimeout ->
-      if scroll == 'down' && flag < ($scrollBlocks.length - 1)
-        flag++
-        toggleFlags()
-      else if scroll == 'up' && flag > 0
-        flag--
-        toggleFlags()
-      return
-    , 100
+    if !setTimeLimit
+      setTimeLimit = true
+      limitTimer = setTimeout ->
+        console.log 'time out.'
+        clearTimeout wheelTimer
+        setTimeLimit = false
+        return
+      , 1000
 
+    wheelTimer = setTimeout ->
+      wheelAction()
+    , 100
     return
-  , { passive: true }
+
+  window.addEventListener 'touchmove', (e)->
+    e.preventDefault()
+    event = document.createEvent 'HTMLEvents'
+    event.initEvent 'wheel', true, false
+    return window.dispatchEvent(event)
+
+  return

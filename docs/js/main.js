@@ -1,34 +1,40 @@
 (function() {
-  var $scrollBlocks, animationInProgress, flag, scroll, toggleFlags, wheelTimer;
-  flag = 0;
+  var $scrollBlocks, animationInProgress, scroll, setTimeLimit, slide, toggleSlides, wheelAction, wheelTimer;
+  slide = 0;
   scroll = void 0;
   wheelTimer = void 0;
   animationInProgress = false;
+  setTimeLimit = false;
   $scrollBlocks = $('.js-scrollBlock');
-  toggleFlags = function() {
+  toggleSlides = function() {
     animationInProgress = true;
-    return $scrollBlocks.each(function(i) {
+    $scrollBlocks.each(function(i) {
       $(this).removeClass('is-current is-prev is-next');
-      if (i === flag) {
+      if (i === slide) {
         return $(this).addClass('is-current').on('transitionend', function() {
           return animationInProgress = false;
         });
-      } else if (i === (flag - 1)) {
+      } else if (i === (slide - 1)) {
         return $(this).addClass('is-prev');
-      } else if (i === (flag + 1)) {
+      } else if (i === (slide + 1)) {
         return $(this).addClass('is-next');
       }
     });
   };
-  window.addEventListener('touchmove', function(e) {
-    var event;
-    e.preventDefault();
-    event = document.createEvent('HTMLEvents');
-    event.initEvent('wheel', true, false);
-    return window.dispatchEvent(event);
-  });
-  return window.addEventListener('wheel', function(e) {
+  wheelAction = function() {
+    console.log('wheeled');
+    if (scroll === 'down' && slide < ($scrollBlocks.length - 1)) {
+      slide++;
+      toggleSlides();
+    } else if (scroll === 'up' && slide > 0) {
+      slide--;
+      toggleSlides();
+    }
+  };
+  window.addEventListener('wheel', function(e) {
+    var limitTimer;
     console.log(e);
+    e.preventDefault();
     if (animationInProgress) {
       scroll = void 0;
     } else {
@@ -41,16 +47,23 @@
     if (wheelTimer) {
       clearTimeout(wheelTimer);
     }
+    if (!setTimeLimit) {
+      setTimeLimit = true;
+      limitTimer = setTimeout(function() {
+        console.log('time out.');
+        clearTimeout(wheelTimer);
+        setTimeLimit = false;
+      }, 1000);
+    }
     wheelTimer = setTimeout(function() {
-      if (scroll === 'down' && flag < ($scrollBlocks.length - 1)) {
-        flag++;
-        toggleFlags();
-      } else if (scroll === 'up' && flag > 0) {
-        flag--;
-        toggleFlags();
-      }
+      return wheelAction();
     }, 100);
-  }, {
-    passive: true
+  });
+  window.addEventListener('touchmove', function(e) {
+    var event;
+    e.preventDefault();
+    event = document.createEvent('HTMLEvents');
+    event.initEvent('wheel', true, false);
+    return window.dispatchEvent(event);
   });
 })();
