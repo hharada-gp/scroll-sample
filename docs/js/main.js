@@ -1,10 +1,11 @@
 (function() {
-  var $scrollBlocks, animationInProgress, scroll, setTimeLimit, slide, toggleSlides, wheelAction, wheelTimer;
+  var $scrollBlocks, animationInProgress, limitPassed, limitTimer, scroll, slide, toggleSlides, wheelAction, wheelTimer;
   slide = 0;
   scroll = void 0;
   wheelTimer = void 0;
+  limitTimer = void 0;
+  limitPassed = false;
   animationInProgress = false;
-  setTimeLimit = false;
   $scrollBlocks = $('.js-scrollBlock');
   toggleSlides = function() {
     animationInProgress = true;
@@ -22,7 +23,6 @@
     });
   };
   wheelAction = function() {
-    console.log('wheeled');
     if (scroll === 'down' && slide < ($scrollBlocks.length - 1)) {
       slide++;
       toggleSlides();
@@ -32,9 +32,6 @@
     }
   };
   window.addEventListener('wheel', function(e) {
-    var limitTimer;
-    console.log(e);
-    e.preventDefault();
     if (animationInProgress) {
       scroll = void 0;
     } else {
@@ -47,17 +44,20 @@
     if (wheelTimer) {
       clearTimeout(wheelTimer);
     }
-    if (!setTimeLimit) {
-      setTimeLimit = true;
-      limitTimer = setTimeout(function() {
-        console.log('time out.');
-        clearTimeout(wheelTimer);
-        setTimeLimit = false;
-      }, 1000);
-    }
     wheelTimer = setTimeout(function() {
-      return wheelAction();
+      if (!limitPassed) {
+        wheelAction();
+        clearTimeout(limitTimer);
+      }
+      limitTimer = void 0;
+      limitPassed = false;
     }, 100);
+    if (limitTimer === void 0) {
+      limitTimer = setTimeout(function() {
+        wheelAction();
+        limitPassed = true;
+      }, 500);
+    }
   });
   window.addEventListener('touchmove', function(e) {
     var event;

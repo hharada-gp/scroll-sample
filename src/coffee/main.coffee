@@ -2,8 +2,9 @@ do ->
   slide = 0
   scroll = undefined
   wheelTimer = undefined
+  limitTimer = undefined
+  limitPassed = false
   animationInProgress = false
-  setTimeLimit = false
   $scrollBlocks = $('.js-scrollBlock')
 
   toggleSlides = ->
@@ -21,7 +22,6 @@ do ->
     return
 
   wheelAction = ->
-    console.log 'wheeled'
     if scroll == 'down' && slide < ($scrollBlocks.length - 1)
       slide++
       toggleSlides()
@@ -31,8 +31,6 @@ do ->
     return
 
   window.addEventListener 'wheel', (e)->
-    console.log e
-    e.preventDefault()
     if animationInProgress
       scroll = undefined
     else
@@ -44,18 +42,21 @@ do ->
     if wheelTimer
       clearTimeout wheelTimer
 
-    if !setTimeLimit
-      setTimeLimit = true
-      limitTimer = setTimeout ->
-        console.log 'time out.'
-        clearTimeout wheelTimer
-        setTimeLimit = false
-        return
-      , 1000
-
     wheelTimer = setTimeout ->
-      wheelAction()
+      if !limitPassed
+        wheelAction()
+        clearTimeout limitTimer
+      limitTimer = undefined
+      limitPassed = false
+      return
     , 100
+
+    if limitTimer == undefined
+      limitTimer = setTimeout ->
+        wheelAction()
+        limitPassed = true
+        return
+      , 500
     return
 
   window.addEventListener 'touchmove', (e)->
